@@ -113,8 +113,6 @@ export function createHostTerminalRuntimeStub(
     resolveLiveLeafForHandle: (handle: string) => (handle === terminalHandle ? { ptyId } : null),
     resolveLeafForHandle: (handle: string) => (handle === terminalHandle ? { ptyId } : null),
     registerRemoteTerminalViewSubscriber: () => () => {},
-    isSoleRemoteTerminalQueryOwner: () => false,
-    answerYieldedTerminalQueries: () => {},
     requestRendererTerminalTabMount: () => true,
     updateRemoteDesktopViewer: async () => true,
     unregisterRemoteDesktopViewer: async () => true,
