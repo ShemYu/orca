@@ -101,9 +101,7 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
       const { environmentId, hostUpdates, strippedMuseStatusBar } = prepareHostUpdates(updates)
       await callRuntimeResult('ui.set', hostUpdates, 15_000)
       explorerRoots.acknowledge(environmentId, hostUpdates)
-      if (strippedMuseStatusBar) {
-        throw new Error('Muse status bar preference is pending host support')
-      }
+      museStatusBar.assertAcknowledged(strippedMuseStatusBar)
       if (
         updates.explorerDisplayRootByWorktree !== undefined &&
         hostUpdates.explorerDisplayRootByWorktree === undefined
@@ -270,6 +268,7 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     replyTerminalCreate: () => {},
     onPublishAgentLaunchTab: () => noopUnsubscribe,
     onAgentLaunchPaneVerdict: () => noopUnsubscribe,
+    onLaunchRecipe: () => noopUnsubscribe,
     replyAgentLaunchTabPublish: () => {},
     onRevealTerminalPane: () => noopUnsubscribe,
     replyTerminalPaneReveal: () => {},
