@@ -50,6 +50,8 @@ vi.mock('./antigravity-usage-fetcher', () => ({
   fetchAntigravityRateLimits: vi.fn()
 }))
 
+vi.mock('./muse-usage-fetcher', () => ({ fetchMuseRateLimits: vi.fn() }))
+
 vi.mock('./cursor-fetcher', () => ({
   fetchCursorRateLimits: vi.fn()
 }))
