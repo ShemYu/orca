@@ -2,7 +2,7 @@
 title: Usage & rate-limit tracking
 ---
 
-Orca reads local usage state for Claude Code, Codex, Gemini, OpenCode, Kimi Code, and MiniMax and surfaces it in the status bar, so you know how close you are to a rate limit before an agent stalls.
+Orca tracks usage for Claude Code, Codex, Muse Code, Gemini, OpenCode, Kimi Code, and MiniMax and surfaces it in the status bar, so you know how close you are to a rate limit before an agent stalls.
 
 ## What's shown
 
@@ -12,7 +12,17 @@ Orca reads local usage state for Claude Code, Codex, Gemini, OpenCode, Kimi Code
 
 ## How it works
 
-Orca reads the local usage state each agent maintains on disk (under `~/.claude`, `~/.codex`, and the Gemini/OpenCode equivalents). No API calls, no extra auth. This means the readout is only as fresh as the agent's own bookkeeping — numbers update when the agent writes, not in real time.
+The source depends on the provider. Orca reads local usage state where available (under `~/.claude`, `~/.codex`, and the Gemini/OpenCode equivalents), or asks the provider's CLI for its current allowance. Readouts reflect the latest available provider snapshot.
+
+### Muse Code
+
+When the `muse` CLI is detected, the **Muse Usage** status-bar item shows its subscription session and weekly windows, including reset times. Toggle it under **Settings → Appearance** or the status-bar menu.
+
+Orca runs `muse usage --json` with automatic updates disabled. [Muse Code 1.4.13 introduced this command](https://dev.meta.ai/docs/muse-code/changelog); it may contact Meta to refresh the allowance and does not start a model turn. Muse owns authentication: sign in with `muse login` on the host running your agents. Orca does not copy Muse credentials into its settings. Older CLI versions without the `usage` command show update guidance.
+
+If Meta returns no allowance, the meter shows **Usage unavailable**. Missing allowance is not zero usage or a full quota, and Orca does not spend a model request to obtain a reading. Muse's historical token totals in Stats are separate from subscription quota.
+
+For a remote workspace, usage belongs to its execution host. An older host that does not report Muse usage cannot supply a meter; the viewer's local Muse allowance is not substituted.
 
 ## Multi-account accounting
 
@@ -31,7 +41,7 @@ Rows without live numbers show a short status instead: **Loading usage…**, **n
 
 ### Mobile
 
-On the companion app, open the host **Accounts** screen for the same switcher/usage readout. When Codex has earned **rate-limit reset** credits, spend one from that screen (see [Mobile companion](/docs/mobile)).
+On the companion app, open the host **Accounts** screen for Claude and Codex account usage. The Muse quota meter is currently available in the desktop and web status bar. When Codex has earned **rate-limit reset** credits, spend one from that screen (see [Mobile companion](/docs/mobile)).
 
 ## Estimated cost (Stats)
 
