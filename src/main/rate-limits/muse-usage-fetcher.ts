@@ -110,11 +110,7 @@ export async function fetchMuseRateLimits(
     }
     if (result.code !== 0) {
       const diagnostic = `${result.stdout}\n${result.stderr}`
-      if (
-        /not (?:logged|signed) in|sign in|log in|unauthenticated|authentication required/i.test(
-          diagnostic
-        )
-      ) {
+      if (/\bnot (?:logged|signed) in\b/i.test(diagnostic)) {
         return failed(
           'unavailable',
           'missing-credentials',

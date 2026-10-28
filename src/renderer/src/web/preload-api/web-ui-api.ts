@@ -101,9 +101,7 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
       const { environmentId, hostUpdates, strippedMuseStatusBar } = prepareHostUpdates(updates)
       await callRuntimeResult('ui.set', hostUpdates, 15_000)
       explorerRoots.acknowledge(environmentId, hostUpdates)
-      if (strippedMuseStatusBar) {
-        throw new Error('Muse status bar preference is pending host support')
-      }
+      museStatusBar.assertAcknowledged(strippedMuseStatusBar)
       if (
         updates.explorerDisplayRootByWorktree !== undefined &&
         hostUpdates.explorerDisplayRootByWorktree === undefined
@@ -195,9 +193,7 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
       Promise.reject(new Error('Selection clipboard is unavailable in the web client')),
     writeClipboardImage: () => Promise.resolve(),
     writeClipboardFile: () => Promise.resolve({ ok: false, reason: 'unsupported-platform' }),
-    performNativePaste: () => {
-      document.execCommand?.('paste')
-    },
+    performNativePaste: () => void document.execCommand?.('paste'),
     performNativeSelectionAction: (action) => {
       document.execCommand?.(action === 'copy' ? 'copy' : 'selectAll')
     },
@@ -211,8 +207,10 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     },
     isMaximized: () => Promise.resolve(false),
     onOpenSettings: () => noopUnsubscribe,
-    // Why: the web client has no native tray/menu bar, so there's never a queued open-settings intent to consume.
+    // Why: the web client has no native tray/menu bar, so it never queues an open-settings or quit request.
     consumePendingOpenSettings: () => Promise.resolve(false),
+    onQuitAndStopAllSessions: () => noopUnsubscribe,
+    consumePendingQuitAndStopAllSessions: () => Promise.resolve(false),
     onOpenSkillShare: () => noopUnsubscribe,
     consumePendingSkillShare: () => Promise.resolve(null),
     // Why: the web client has no OS shell handing it files, so there is never a queued open.
@@ -240,6 +238,7 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     onWorktreeHistoryNavigate: () => noopUnsubscribe,
     onRequestTabCreate: () => noopUnsubscribe,
     replyTabCreate: () => {},
+    browserTabRequestsReady: () => {},
     onRequestRemoteCliBrowserScope: () => noopUnsubscribe,
     replyRemoteCliBrowserScope: () => {},
     onRequestTabSetProfile: () => noopUnsubscribe,
@@ -270,6 +269,7 @@ export function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     replyTerminalCreate: () => {},
     onPublishAgentLaunchTab: () => noopUnsubscribe,
     onAgentLaunchPaneVerdict: () => noopUnsubscribe,
+    onLaunchRecipe: () => noopUnsubscribe,
     replyAgentLaunchTabPublish: () => {},
     onRevealTerminalPane: () => noopUnsubscribe,
     replyTerminalPaneReveal: () => {},

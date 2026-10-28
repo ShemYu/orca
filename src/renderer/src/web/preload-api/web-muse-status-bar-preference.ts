@@ -29,6 +29,11 @@ export function createWebMuseStatusBarPreference() {
         updates.statusBarItems = updates.statusBarItems.filter((item) => item !== 'muse')
       }
       return stripped
+    },
+    assertAcknowledged(stripped: boolean): void {
+      if (stripped) {
+        throw new Error('Muse status bar preference is pending host support')
+      }
     }
   }
 }

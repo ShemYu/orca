@@ -147,6 +147,12 @@ describe('Muse CLI quota read', () => {
 
   it.each([
     { usage: result({ code: 1, stderr: 'HTTP 503 token=secret' }), kind: 'server' },
+    { usage: result({ code: 1, stderr: 'Failed to refresh catalog index' }), kind: 'server' },
+    { usage: result({ code: 1, stderr: 'Invalid design input from upstream' }), kind: 'server' },
+    {
+      usage: result({ code: 1, stderr: 'Proxy authentication required (HTTP 407)' }),
+      kind: 'server'
+    },
     { usage: result({ stdout: 'not JSON' }), kind: 'parse' },
     { usage: result({ timedOut: true }), kind: 'usage-unavailable' },
     { usage: result({ stdout: USAGE, outputTruncated: true }), kind: 'usage-unavailable' }

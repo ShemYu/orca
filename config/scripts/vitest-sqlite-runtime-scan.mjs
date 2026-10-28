@@ -24,7 +24,6 @@ const SQLITE_HARNESSES = new Set([
 ])
 export const SQLITE_MODULES = [
   'src/main/sqlite/sync-database',
-  'src/main/persistence/profile-state/profile-state-database',
   'src/main/persistence/profile-state/profile-state-sqlite-authority',
   'src/main/native-chat/agent-session-journal/journal-host-database',
   'src/main/runtime/orchestration/db',
