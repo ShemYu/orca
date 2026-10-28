@@ -2,7 +2,7 @@
 title: Usage & rate-limit tracking
 ---
 
-Orca tracks usage for Claude Code, Codex, Muse Code, Gemini, OpenCode, Kimi Code, and MiniMax and surfaces it in the status bar, so you know how close you are to a rate limit before an agent stalls.
+Orca fetches usage for Claude Code, Codex, Gemini, OpenCode Go, Kimi Code, MiniMax, Grok, Antigravity, Cursor, and GLM Coding Plan and surfaces it in the status bar, so you know how close you are to a rate limit before an agent stalls.
 
 ## What's shown
 
@@ -12,17 +12,16 @@ Orca tracks usage for Claude Code, Codex, Muse Code, Gemini, OpenCode, Kimi Code
 
 ## How it works
 
-The source depends on the provider. Orca reads local usage state where available (under `~/.claude`, `~/.codex`, and the Gemini/OpenCode equivalents), or asks the provider's CLI for its current allowance. Readouts reflect the latest available provider snapshot.
+Orca asks each provider for your usage over the network, using the login that agent already has or a key or session cookie you add in Orca Settings.
 
-### Muse Code
+For Claude, Orca requests `https://api.anthropic.com/api/oauth/usage` with the token from your existing Claude Code login; it does not ask for extra credentials. Triggers include:
 
-When the `muse` CLI is detected, the **Muse Usage** status-bar item shows its subscription session and weekly windows, including reset times. Toggle it under **Settings → Appearance** or the status-bar menu.
-
-Orca runs `muse usage --json` with automatic updates disabled. [Muse Code 1.4.13 introduced this command](https://dev.meta.ai/docs/muse-code/changelog); it may contact Meta to refresh the allowance and does not start a model turn. Muse owns authentication: sign in with `muse login` on the host running your agents. Orca does not copy Muse credentials into its settings. Older CLI versions without the `usage` command show update guidance.
-
-If Meta returns no allowance, the meter shows **Usage unavailable**. Missing allowance is not zero usage or a full quota, and Orca does not spend a model request to obtain a reading. Muse's historical token totals in Stats are separate from subscription quota.
-
-For a remote workspace, usage belongs to its execution host. An older host that does not report Muse usage cannot supply a meter; the viewer's local Muse allowance is not substituted.
+- Once the Orca window is active after startup, then about every 15 minutes while it stays visible and focused.
+- Bringing the window back to the front when the last check is more than 5 minutes old (sooner after a failed check).
+- Switching the active Claude account or the runtime it runs in.
+- Refreshing usage from the **Usage** popover or a Settings control that refreshes all usage, or changing OpenCode Go, MiniMax, or GLM Coding Plan usage credentials or settings. These refresh every provider, Claude included.
+- Expanding the account list in the status bar's Claude account switcher, which fetches your other saved Claude accounts. The list opens expanded when an account needs sign-in.
+- Orca Mobile or the web client connecting to this host or refreshing usage, which also fetches your other saved Claude accounts.
 
 ## Multi-account accounting
 
@@ -30,7 +29,7 @@ The status bar always reflects the _active_ account. Other configured accounts a
 
 ## Usage roster
 
-Click the usage segment in the status bar to open the **Usage** popover. It lists every tracked provider (icon · name · plan · soonest reset · per-window bars), sorted so the tightest limit is first. Use the header refresh control to re-read local usage state.
+Click the usage segment in the status bar to open the **Usage** popover. It lists every tracked provider (icon · name · plan · soonest reset · per-window bars), sorted so the tightest limit is first. Use the header refresh control to fetch usage again.
 
 - **Detailed** — full bars, labels, and percentages for every window
 - **Compact** — only the tightest window per provider
@@ -41,7 +40,7 @@ Rows without live numbers show a short status instead: **Loading usage…**, **n
 
 ### Mobile
 
-On the companion app, open the host **Accounts** screen for Claude and Codex account usage. The Muse quota meter is currently available in the desktop and web status bar. When Codex has earned **rate-limit reset** credits, spend one from that screen (see [Mobile companion](/docs/mobile)).
+On the companion app, open the host **Accounts** screen for the same switcher/usage readout. When Codex has earned **rate-limit reset** credits, spend one from that screen (see [Mobile companion](/docs/mobile)).
 
 ## Estimated cost (Stats)
 
